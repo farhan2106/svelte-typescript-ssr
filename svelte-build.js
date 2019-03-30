@@ -1,7 +1,7 @@
 const glob = require('glob');
 const fs = require('fs')
 
-glob(__dirname + '/src/**/*.svelte', {}, (err, files)=>{
+glob(__dirname + '/src/**/*.html', {}, (err, files)=>{
   files.forEach(file => {
     fs.readFile(file, 'utf8', (err, data) => {
       if (err) {
@@ -9,14 +9,14 @@ glob(__dirname + '/src/**/*.svelte', {}, (err, files)=>{
       }
   
       data += '\r\n\r\n<script>\r\n'
-      fs.readFile(file.replace('/src/', '/build/').replace('.svelte', '.js'), 'utf8', (err, svelteScriptTag) => {
+      fs.readFile(file.replace('/src/', '/build/').replace('.html', '.js'), 'utf8', (err, svelteScriptTag) => {
         if (err) return console.log(err)
 
         data += svelteScriptTag
         data += '</script>\r\n'
         fs.writeFile(file.replace('/src/', '/build/'), data, 'utf8', err => {
            if (err) return console.log(err)
-           fs.unlink(file.replace('/src/', '/build/').replace('.svelte', '.js'), () => {})
+           fs.unlink(file.replace('/src/', '/build/').replace('.html', '.js'), () => {})
         })
       })
     })

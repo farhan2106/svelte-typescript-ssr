@@ -1,4 +1,4 @@
-import WelcomePage from './components/WelcomePage/WelcomePage.svelte'
+import WelcomePage from './components/WelcomePage/WelcomePage.html'
 
 export default {
   components: {

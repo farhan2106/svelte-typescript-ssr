@@ -1,6 +1,5 @@
 require('svelte/ssr/register')({
-  extensions: ['.svelte'],
-  format: 'umd'
+  extensions: ['.html']
 })
 const fs = require('fs')
 const svelte = require('svelte')
@@ -10,11 +9,15 @@ const port = 3000
 
 async function run () {
   try {
-    const tmpl = require('./App.svelte')
+    const tmpl = require('./App.html')
+    console.log(tmpl)
+    console.log(tmpl.render())
 
-    app.set('view engine', 'pug')
+    app.use(express.static('public'))
+    app.set('view engine', 'ejs')
     app.get('/', (req: any, res: any) => {
-      res.send(tmpl.render())
+      // res.send(tmpl.render())
+      res.render('layout', tmpl.render())
     })
     app.listen(port, () => console.log(`Example app listening on port ${port}!`))
   } catch (e) {

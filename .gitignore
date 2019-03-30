@@ -84,3 +84,4 @@ typings/
 .dynamodb/
 
 build
+public
