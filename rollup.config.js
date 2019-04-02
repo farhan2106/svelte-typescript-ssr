@@ -5,7 +5,7 @@ import { terser } from 'rollup-plugin-terser'
 import packageJson from './package.json'
 
 module.exports = {
-  input: './build/client.js',
+  input: 'build/pages/client.js',
   output: {
     name: packageJson['name'],
     file: 'public/bundle.js',
