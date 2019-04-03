@@ -11,10 +11,8 @@
 <body class="container">
   {{{ html }}}
 
-  <script src="bundle.js"></script>
+  <script src="{{ sveltePageJs }}"></script>
   <script>
-    {{{ hydration }}}
-
     document.addEventListener('DOMContentLoaded', () => {
       new window.page.default({
         hydrate: true

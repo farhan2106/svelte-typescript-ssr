@@ -14,13 +14,16 @@ async function run () {
       let data = fs.readFileSync(file, 'utf8')
       data += '\r\n\r\n<script>\r\n'
 
-      const svelteScriptTag = fs.readFileSync(file.replace('/src/', '/build/').replace('.html', '.js'), 'utf8')
-      data += svelteScriptTag
-      data += '</script>\r\n'
+      const jsFilePath = file.replace('/src/', '/build/').replace('.html', '.js')
+      if (fs.existsSync(jsFilePath)) {
+        const svelteScriptTag = fs.readFileSync(jsFilePath, 'utf8')
+        data += svelteScriptTag
+        data += '</script>\r\n'
 
-      fs.writeFileSync(file.replace('/src/', '/build/'), data, 'utf8')
+        fs.writeFileSync(file.replace('/src/', '/build/'), data, 'utf8')
 
-      fs.unlinkSync(file.replace('/src/', '/build/').replace('.html', '.js'))
+        fs.unlinkSync(file.replace('/src/', '/build/').replace('.html', '.js'))
+      }
     })
     resolve()
   })

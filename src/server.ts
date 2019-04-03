@@ -4,6 +4,7 @@ require('svelte/ssr/register')({
 
 import express from 'express'
 const glob = require('glob');
+const clientJson = require('./../build/client.json')
 
 const app = express()
 const port = 3000
@@ -27,6 +28,7 @@ async function run () {
         )
       })
     })
+    console.log(routePaths)
 
     // Render templates 
     const renderedTmpl = routePaths.map((p: string) => {
@@ -35,8 +37,21 @@ async function run () {
     })
 
     routePaths.forEach((p: string, index: number) => {
+
+      // find the javascript file for the client based on route
+      let clientJsFileName: string
+      for (const index in clientJson) {
+        if (clientJson[index] ===`${__dirname}/pages${p}.html`) {
+          clientJsFileName = index
+        }
+      }
+
+      // route handler for the pages
       app.get(`${p.toLowerCase()}`, (req: express.Request, res: express.Response) => {
-        res.render('template', renderedTmpl[index])
+        res.render('template', {
+          sveltePageJs: clientJsFileName + '.js',
+          ...renderedTmpl[index]
+        })
       })
     })
 
