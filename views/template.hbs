@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+-<!DOCTYPE html>
 <html lang="en">
 <head>
   {{{ head }}}
@@ -14,6 +14,12 @@
   <script src="bundle.js"></script>
   <script>
     {{{ hydration }}}
+
+    document.addEventListener('DOMContentLoaded', () => {
+      new window.page.default({
+        hydrate: true
+      })
+    }, false);
   </script>
 </body>
 </html>
