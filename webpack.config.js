@@ -1,5 +1,10 @@
 const path = require('path')
 
+/**
+ * Webpack is used to generate the client js files for hydration
+ * Each route will have its own js to ensure that it only loads 
+ * the minimum svelte component.
+ */
 module.exports = {
   entry: require('./build/client.json'),
   mode: 'development',
