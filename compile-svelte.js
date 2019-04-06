@@ -1,6 +1,6 @@
 const glob = require('glob');
 const fs = require('fs')
-const uuid = require('uuid')
+const shortid = require('shortid')
 const arrToObj = require('array-to-object')
 
 async function run () {
@@ -32,7 +32,7 @@ async function run () {
    * Build individual js file for client pages. For hydration
    */
   const builtFiles = glob.sync(__dirname + '/build/pages/**/*.html')
-  fs.writeFileSync('./build/client.json', JSON.stringify(arrToObj(builtFiles.map(f => uuid.v4()), builtFiles)))
+  fs.writeFileSync('./build/client.json', JSON.stringify(arrToObj(builtFiles.map(f => shortid.generate()), builtFiles)))
 }
 
 run()

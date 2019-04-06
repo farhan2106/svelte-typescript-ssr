@@ -7,6 +7,7 @@
     "express": "^4.16.4",
     "hbs": "^4.0.3",
     "rimraf": "^2.6.3",
+    "shortid": "^2.2.14",
     "svelte": "^2.16.1"
   },
   "devDependencies": {
@@ -26,7 +27,6 @@
     "svelte-loader": "^2.13.3",
     "ts-node": "^8.0.3",
     "typescript": "^3.4.1",
-    "uuid": "^3.3.2",
     "webpack-cli": "^3.3.0"
   },
   "scripts": {
@@ -35,7 +35,7 @@
     "build:client": "webpack",
     "build": "npm run clean && npm run build:server && npm run build:client",
     "start": "cross-env NODE_ENV=production npm run build && node -r esm build/server.js",
-    "dev": "nodemon --watch src --ext ts,html 'npm run start'",
+    "dev": "nodemon --watch src --ext ts,html 'npm run build && node -r esm build/server.js'",
     "storybook": "start-storybook --ci"
   }
 }
