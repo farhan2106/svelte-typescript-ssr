@@ -7,7 +7,7 @@ const path = require('path')
  */
 module.exports = {
   entry: require('./build/client.json'),
-  mode: 'development',
+  mode: process.env.NODE_ENV || 'development',
   output: {
     libraryTarget: 'umd',
     library: 'page',

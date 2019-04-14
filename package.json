@@ -2,6 +2,7 @@
   "name": "svelte-typescript",
   "version": "1.0.0",
   "dependencies": {
+    "body-parser": "^1.18.3",
     "core-js": "^3.0.0",
     "esm": "^3.2.22",
     "express": "^4.16.4",
@@ -23,6 +24,7 @@
     "babel-loader": "^8.0.5",
     "cross-env": "^5.1.5",
     "glob": "^7.1.3",
+    "livereload": "^0.7.0",
     "nodemon": "^1.18.10",
     "svelte-loader": "^2.13.3",
     "ts-node": "^8.0.3",
@@ -31,11 +33,13 @@
   },
   "scripts": {
     "clean": "rimraf build && rimraf public",
+    "kill": "fuser -n tcp -k 8080 && fuser -n tcp -k 8181",
     "build:server": "tsc && node compile-svelte.js",
     "build:client": "webpack",
     "build": "npm run clean && npm run build:server && npm run build:client",
+    "watch:server": "nodemon --watch src --ext ts,html,hbs 'npm run kill && npm run build && node -r esm build/server.js'",
     "start": "cross-env NODE_ENV=production npm run build && node -r esm build/server.js",
-    "dev": "nodemon --watch src --ext ts,html 'npm run build && node -r esm build/server.js'",
+    "dev": "livereload . -w 10000 -d | npm run watch:server",
     "storybook": "start-storybook --ci"
   }
 }

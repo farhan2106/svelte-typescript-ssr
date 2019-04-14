@@ -1,14 +1,17 @@
--<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   {{{ head }}}
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 
   <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css" />
   <style type="text/css">
     {{{ css.code }}}
   </style>
 </head>
-<body class="container">
+<body>
   {{{ html }}}
 
   <script src="{{ sveltePageJs }}"></script>
@@ -19,5 +22,10 @@
       })
     }, false);
   </script>
+
+  <!-- dev only -->
+  <script>
+    document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')
+  </script> 
 </body>
 </html>

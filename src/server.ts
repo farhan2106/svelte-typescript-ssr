@@ -3,17 +3,20 @@ require('svelte/ssr/register')({
 })
 
 import express from 'express'
-import { runInContext } from 'vm';
-const glob = require('glob');
+const bodyParser = require('body-parser')
+const glob = require('glob')
 const clientJson = require('./../build/client.json')
 
 const app = express()
-const port = 3000
+const port = 8080
+const httpsPort = 8181
 
 async function run () {
   try {
     app.set('view engine', 'hbs')
 
+    app.use(bodyParser.json()); // for parsing application/json
+    app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
     app.use(express.static('public'))
 
     // get pages path
@@ -61,7 +64,7 @@ async function run () {
       })
     })
 
-    app.listen(port, () => console.log(`\r\nApp listening on port ${port}`))
+    app.listen(port, () => console.log(`\r\nApp (http) listening on port ${port}`))
   } catch (e) {
     console.error(e)
   }
