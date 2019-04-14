@@ -12,12 +12,13 @@
   </style>
 </head>
 <body>
-  {{{ html }}}
+  <div id="app">{{{ html }}}</div>
 
   <script src="{{ sveltePageJs }}"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       new window.page.default({
+        target: document.getElementById('app'),
         hydrate: true
       })
     }, false);
