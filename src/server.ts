@@ -70,9 +70,6 @@ async function run () {
     const serverStart = () => {
       app.listen(app.get('port'), () => {
         console.log(`\r\nApp (http) listening on port ${app.get('port')}`)
-        if (process.send) {
-          process.send('online')
-        }
       })
     }
 
