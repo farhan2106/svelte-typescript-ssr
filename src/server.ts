@@ -3,16 +3,18 @@ require('svelte/ssr/register')({
 })
 
 import express from 'express'
+const reload = require('reload')
 const bodyParser = require('body-parser')
 const glob = require('glob')
 const clientJson = require('./../build/client.json')
 
 const app = express()
-const port = 8080
-const httpsPort = 8181
 
 async function run () {
   try {
+    app.set('port', process.env.PORT || 8080)
+    app.set('httpsPort', process.env.HTTPS_PORT || 8181)
+    app.set('env', process.env.NODE_ENV || 'development')
     app.set('view engine', 'hbs')
 
     app.use(bodyParser.json()); // for parsing application/json
@@ -58,13 +60,31 @@ async function run () {
       console.log(`Route handler: ${routePath} initialized.`)
       app.get(`${routePath}`, (req: express.Request, res: express.Response) => {
         res.render('template', {
+          devMode: app.get('env') === 'development',
           sveltePageJs: `/${clientJsFileName}.js`,
           ...renderedTmpl[index]
         })
       })
     })
 
-    app.listen(port, () => console.log(`\r\nApp (http) listening on port ${port}`))
+    const serverStart = () => {
+      app.listen(app.get('port'), () => {
+        console.log(`\r\nApp (http) listening on port ${app.get('port')}`)
+        if (process.send) {
+          process.send('online')
+        }
+      })
+    }
+
+    if (app.get('env') === 'development') {
+      reload(app)
+        .then(serverStart)
+        .catch((err: Error) => {
+          console.error('Reload could not start, could not start server/sample app', err)
+        })
+    } else {
+      serverStart()
+    }
   } catch (e) {
     console.error(e)
   }

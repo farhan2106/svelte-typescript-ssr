@@ -24,8 +24,8 @@
     "babel-loader": "^8.0.5",
     "cross-env": "^5.1.5",
     "glob": "^7.1.3",
-    "livereload": "^0.7.0",
     "nodemon": "^1.18.10",
+    "reload": "^3.0.0",
     "svelte-loader": "^2.13.3",
     "ts-node": "^8.0.3",
     "typescript": "^3.4.1",
@@ -37,9 +37,8 @@
     "build:server": "tsc && node compile-svelte.js",
     "build:client": "webpack",
     "build": "npm run clean && npm run build:server && npm run build:client",
-    "watch:server": "nodemon --watch src --ext ts,html,hbs 'npm run kill && npm run build && node -r esm build/server.js'",
     "start": "cross-env NODE_ENV=production npm run build && node -r esm build/server.js",
-    "dev": "livereload . -w 10000 -d | npm run watch:server",
+    "dev": "nodemon",
     "storybook": "start-storybook --ci"
   }
 }
