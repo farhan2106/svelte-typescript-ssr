@@ -77,7 +77,7 @@ async function run () {
       reload(app)
         .then(serverStart)
         .catch((err: Error) => {
-          console.error('Reload could not start, could not start server/sample app', err)
+          console.error('Reload could not start, could not start app', err)
         })
     } else {
       serverStart()
