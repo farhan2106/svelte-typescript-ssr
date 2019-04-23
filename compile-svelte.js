@@ -1,5 +1,5 @@
-const glob = require('glob');
 const fs = require('fs')
+const glob = require('glob')
 const shortid = require('shortid')
 const arrToObj = require('array-to-object')
 
