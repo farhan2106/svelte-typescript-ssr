@@ -9,22 +9,6 @@ const arrToObj = require('array-to-object')
 
 const tsProject = ts.createProject('tsconfig.json')
 
-function clean (cb) {
-  // body omitted
-  cb();
-}
-
-function buildTs () {
-  return src('src/**/*.ts')
-    .pipe(tsProject())
-    .pipe(dest('build'))
-}
-
-function buildHtml () {
-  return src('src/**/*.html')
-    .pipe(dest('build'))
-}
-
 function mergeSvelte () {
   return src('src/**/*.ts')
     .pipe(tsProject())
@@ -49,6 +33,4 @@ function buildClientJs (cb) {
   cb()
 }
 
-watch(['src/**/*.ts'], series(clean, buildTs, buildHtml, buildClientJs));
-exports.mergeSvelte = series(clean, mergeSvelte, buildClientJs);
-exports.default = series(clean, buildTs, buildHtml, buildClientJs);
+exports.default = series(mergeSvelte, buildClientJs);

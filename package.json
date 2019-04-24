@@ -37,7 +37,7 @@
   "scripts": {
     "clean": "rimraf build && rimraf public",
     "kill": "fuser -n tcp -k 8080 && fuser -n tcp -k 8181",
-    "build:server": "tsc && node compile-svelte.js",
+    "build:server": "gulp",
     "build:client": "webpack",
     "build": "npm run clean && npm run build:server && npm run build:client",
     "start": "cross-env NODE_ENV=production npm run build && node -r esm build/server.js",
