@@ -1,5 +1,8 @@
-require('svelte/ssr/register')({
-  extensions: ['.html']
+require('svelte/register')({
+  extensions: ['.html'],
+  css: false,
+  hydratable: true,
+  dev: process.env.NODE_ENV !== 'production'
 })
 
 import express from 'express'
@@ -38,7 +41,7 @@ async function run () {
     // Render templates 
     const renderedTmpl = routePaths.map((p: string) => {
       const tmpl = require(`./pages/${p}.html`)
-      return tmpl.render()
+      return tmpl.default.render()
     })
 
     console.log('\r')
