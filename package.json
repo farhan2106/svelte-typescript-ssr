@@ -1,25 +1,25 @@
 {
-  "name": "svelte-typescript",
+  "name": "svelte-typescript-ssr",
   "version": "1.0.0",
   "dependencies": {
     "body-parser": "^1.18.3",
-    "core-js": "^3.0.0",
+    "core-js": "^3.0.1",
     "esm": "^3.2.22",
     "express": "^4.16.4",
-    "hbs": "^4.0.3",
+    "hbs": "^4.0.4",
     "rimraf": "^2.6.3",
     "shortid": "^2.2.14",
-    "svelte": "^2.16.1"
+    "svelte": "^3.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.4.0",
-    "@storybook/addon-actions": "^5.0.5",
-    "@storybook/addon-knobs": "^5.0.5",
-    "@storybook/addon-notes": "^5.0.5",
-    "@storybook/addons": "^5.0.5",
-    "@storybook/svelte": "^5.0.5",
+    "@babel/core": "^7.4.3",
+    "@storybook/addon-actions": "^5.0.10",
+    "@storybook/addon-knobs": "^5.0.10",
+    "@storybook/addon-notes": "^5.0.10",
+    "@storybook/addons": "^5.0.10",
+    "@storybook/svelte": "^5.0.10",
     "@types/express": "^4.16.1",
-    "@types/node": "^11.12.2",
+    "@types/node": "^11.13.7",
     "array-to-object": "^1.1.0",
     "babel-loader": "^8.0.5",
     "cross-env": "^5.1.5",
@@ -27,12 +27,11 @@
     "gulp": "^4.0.1",
     "gulp-tap": "^1.0.1",
     "gulp-typescript": "^5.0.1",
-    "nodemon": "^1.18.10",
-    "reload": "^3.0.0",
+    "nodemon": "^1.18.11",
+    "reload": "^3.0.1",
     "svelte-loader": "^2.13.3",
-    "ts-node": "^8.0.3",
-    "typescript": "^3.4.4",
-    "webpack-cli": "^3.3.0"
+    "typescript": "^3.4.5",
+    "webpack-cli": "^3.3.1"
   },
   "scripts": {
     "clean": "rimraf build && rimraf public",
@@ -40,8 +39,8 @@
     "build:server": "gulp",
     "build:client": "webpack",
     "build": "npm run clean && npm run build:server && npm run build:client",
-    "start": "cross-env NODE_ENV=production npm run build && node -r esm build/server.js",
     "dev": "nodemon",
+    "start": "cross-env NODE_ENV=production npm run build && node -r esm build/server.js",
     "storybook": "start-storybook --ci"
   }
 }
