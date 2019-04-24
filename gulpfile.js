@@ -1,7 +1,6 @@
-const { dest, watch, src, series } = require('gulp')
+const { dest, src, series } = require('gulp')
 const ts = require('gulp-typescript')
 const tap = require('gulp-tap')
-const path = require('path')
 const fs = require('fs')
 const glob = require('glob')
 const shortid = require('shortid')
