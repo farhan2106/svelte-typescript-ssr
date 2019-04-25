@@ -12,9 +12,9 @@ storiesOf('WelcomePage', module)
       data: {
         name,
       },
-      on: {
-        click: action('clicked')
-      }
+      // on: {
+      //   click: action('clicked')
+      // }
     }
   })
 

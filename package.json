@@ -41,6 +41,6 @@
     "build": "npm run clean && npm run build:server && npm run build:client",
     "dev": "nodemon",
     "start": "cross-env NODE_ENV=production npm run build && node -r esm build/server.js",
-    "storybook": "start-storybook --ci"
+    "storybook": "npm run build && start-storybook --ci"
   }
 }
