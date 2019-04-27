@@ -78,17 +78,19 @@ function webpackTask (cb) {
   webpack(importFresh('./webpack.config')).run(cb);
 }
 
+let server = undefined
 function serve (cb) {
-  const server = gls.new(['--harmony', 'build/main.js'])
-  server.start();
-  watch(['build', 'public'], () => {
+  if (!server) {
+    server = gls.new(['--harmony', 'build/main.js'])
+    server.start()
+  } else {
     server.stop()
     server.start()
-  })
+  }
   cb()
 }
 
-const buildTasks = series(scriptSvelte, styleSvelte, buildClientJs, webpackTask)
+const buildTasks = series(scriptSvelte, styleSvelte, buildClientJs, webpackTask, serve)
 
 const developmentTasks = series(
   emptyDirs, 
