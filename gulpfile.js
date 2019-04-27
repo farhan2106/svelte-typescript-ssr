@@ -1,4 +1,4 @@
-const { dest, src, watch, series, lastRun, parallel } = require('gulp')
+const { dest, src, watch, series } = require('gulp')
 const ts = require('gulp-typescript')
 const tap = require('gulp-tap')
 const clean = require('gulp-clean')
@@ -21,7 +21,7 @@ function emptyDirs () {
 }
 
 function scriptSvelte () {
-  return src('src/**/*.ts', { since: lastRun(scriptSvelte) })
+  return src('src/**/*.ts')
     .pipe(tsProject())
     .pipe(tap(function(file) {
       const svelteHtmlPath = file.path.replace('build', 'src').replace('.js', '.html')
@@ -40,7 +40,7 @@ function scriptSvelte () {
 }
 
 function styleSvelte () {
-  return src('src/**/*.styl', { since: lastRun(styleSvelte) })
+  return src('src/**/*.styl')
     .pipe(stylus())
     .pipe(postcss([
       atImport({ path: __dirname + '/src' })
