@@ -97,5 +97,5 @@ const developmentTasks = series(
   series(scriptSvelte, styleSvelte, buildClientJs, webpackTask, serve)
 )
 
-process.env.NODE_ENV !== 'production' && watch(['src/**/*.*'], buildTasks)
+process.env.NODE_ENV !== 'production' && watch(['src/**/*.*', 'views'], buildTasks)
 exports.default = process.env.NODE_ENV !== 'production' ? developmentTasks : buildTasks
