@@ -1,4 +1,6 @@
 const path = require('path')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const importFresh = require('import-fresh')
 
 /**
  * Webpack is used to generate the client js files for hydration
@@ -6,7 +8,7 @@ const path = require('path')
  * the minimum svelte component.
  */
 module.exports = {
-  entry: require('./build/client.json'),
+  entry: importFresh('./build/client.json'),
   mode: process.env.NODE_ENV || 'development',
   output: {
     libraryTarget: 'umd',
@@ -28,6 +30,14 @@ module.exports = {
         },
       }
     ]
-  }
+  },
+  plugins: [
+    new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output
+      // both options are optional
+      filename: '[name].css',
+      chunkFilename: '[id].css',
+    }),
+  ]
 };
 
