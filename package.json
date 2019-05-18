@@ -32,6 +32,8 @@
     "gulp-stylus": "^2.7.0",
     "gulp-tap": "^1.0.1",
     "gulp-typescript": "^5.0.1",
+    "import-fresh": "^3.0.0",
+    "mini-css-extract-plugin": "^0.6.0",
     "nodemon": "^1.18.11",
     "postcss-import": "^12.0.1",
     "reload": "^3.0.1",
