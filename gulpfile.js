@@ -94,12 +94,12 @@ function serve (cb) {
   cb()
 }
 
-const buildTasks = series(scriptSvelte, styleSvelte, buildClientJs, webpackTask, serve)
+const buildTasks = series(scriptSvelte, styleSvelte, buildClientJs, webpackTask)
 
 const developmentTasks = series(
   emptyDirs, 
   series(scriptSvelte, styleSvelte, buildClientJs, webpackTask, serve)
 )
 
-process.env.NODE_ENV !== 'production' && watch(['src/**/*.*', 'views'], buildTasks)
+process.env.NODE_ENV !== 'production' && watch(['src/**/*.*', 'views'], developmentTasks)
 exports.default = process.env.NODE_ENV !== 'production' ? developmentTasks : buildTasks
