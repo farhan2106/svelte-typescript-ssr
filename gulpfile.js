@@ -7,7 +7,7 @@ const fs = require('fs-extra')
 const glob = require('glob')
 const shortid = require('shortid')
 const arrToObj = require('array-to-object')
-const stylus = require('gulp-stylus')
+const sass = require('gulp-sass')
 const postcss = require("gulp-postcss")
 const atImport = require("postcss-import")
 const webpack = require('webpack')
@@ -40,10 +40,14 @@ function scriptSvelte () {
 }
 
 function styleSvelte () {
-  return src('src/**/*.styl')
-    .pipe(stylus())
+  return src('src/**/*.scss')
+    .pipe(sass())
     .pipe(postcss([
-      atImport({ path: __dirname + '/src' })
+      atImport({
+        path: [
+          __dirname + '/src',
+        ]
+      })
     ]))
     .pipe(tap(function(file) {
       const svelteHtmlPath = file.path.replace('.css', '.html')
