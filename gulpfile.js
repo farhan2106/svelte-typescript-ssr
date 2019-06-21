@@ -79,7 +79,20 @@ function buildClientJs (cb) {
 }
 
 function webpackTask (cb) {
-  webpack(importFresh('./webpack.config')).run(cb);
+  webpack(importFresh('./webpack.config')).run((err, stats) => {
+    if (err !== null) {
+      console.error(err)
+    }
+
+    if (stats.hasErrors()) {
+      console.error(stats.compilation.errors)
+    }
+
+    if (stats.hasWarnings()) {
+      console.warn(stats.compilation.warnings)
+    }
+    cb()
+  });
 }
 
 let server = undefined

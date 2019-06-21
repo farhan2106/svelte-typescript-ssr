@@ -8,7 +8,7 @@ const importFresh = require('import-fresh')
  * the minimum svelte component.
  */
 module.exports = {
-  entry: importFresh('./build/client.json'),
+  entry: Object.assign({ 'bulma': 'bulma' }, importFresh('./build/client.json')),
   mode: process.env.NODE_ENV || 'development',
   output: {
     libraryTarget: 'umd',
@@ -17,6 +17,14 @@ module.exports = {
   },
   module: {
     rules: [
+      {
+        test: /\.(sass|scss)$/,
+        use: [
+          "style-loader",
+          "css-loader",
+          "sass-loader"
+        ]
+      },
       {
         test: /\.(html|svelte)$/,
         exclude: /node_modules/,
