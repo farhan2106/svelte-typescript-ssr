@@ -12,6 +12,7 @@ const postcss = require("gulp-postcss")
 const atImport = require("postcss-import")
 const webpack = require('webpack')
 const importFresh = require('import-fresh')
+const chalk = require('chalk')
 
 const tsProject = ts.createProject('tsconfig.json')
 
@@ -81,15 +82,15 @@ function buildClientJs (cb) {
 function webpackTask (cb) {
   webpack(importFresh('./webpack.config')).run((err, stats) => {
     if (err !== null) {
-      console.error(err)
+      console.error(chalk.red(err))
     }
 
     if (stats.hasErrors()) {
-      console.error(stats.compilation.errors)
+      console.error(chalk.red(stats.compilation.errors))
     }
 
     if (stats.hasWarnings()) {
-      console.warn(stats.compilation.warnings)
+      console.warn(chalk.yellow(stats.compilation.warnings))
     }
     cb()
   });
