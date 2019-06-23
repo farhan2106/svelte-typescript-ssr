@@ -14,16 +14,42 @@ const webpack = require('webpack')
 const importFresh = require('import-fresh')
 const chalk = require('chalk')
 
-const tsProject = ts.createProject('tsconfig.json')
+const svelteTsProject = ts.createProject({
+  "target": "es3",
+  "module": "es2015",
+  "lib": ["dom", "es2015"],
+  "strict": true,
+  "types": ["node"],
+  "rootDir": "./src/ui",
+  "outDir": "./build/ui"
+})
+
+const serverTsProject = ts.createProject({
+  "target": "es3",
+  "module": "commonjs",
+  "lib": ["es2015"],
+  "strict": true,
+  "esModuleInterop": true,
+  "allowSyntheticDefaultImports": true,
+  "types": ["node"],
+  "rootDir": "./src/server",
+  "outDir": "./build/server"
+})
 
 function emptyDirs () {
   return src(['build', 'public'], { read: false, allowEmpty: true })
           .pipe(clean())
 }
 
+function scriptServer () {
+  return src('src/server/**/*.ts')
+    .pipe(serverTsProject())
+    .pipe(dest('build/server'))
+}
+
 function scriptSvelte () {
-  return src('src/**/*.ts')
-    .pipe(tsProject())
+  return src('src/ui/**/*.ts')
+    .pipe(svelteTsProject())
     .pipe(tap(function(file) {
       const svelteHtmlPath = file.path.replace('build', 'src').replace('.js', '.html')
       if (fs.existsSync(svelteHtmlPath)) {
@@ -37,7 +63,7 @@ function scriptSvelte () {
         file.path = file.path.replace('.js', '.html')
       }
     }))
-    .pipe(dest('build'))
+    .pipe(dest('build/ui'))
 }
 
 function styleSvelte () {
@@ -66,7 +92,7 @@ function styleSvelte () {
 }
 
 function buildClientJs (cb) {
-  const builtFiles = glob.sync(__dirname + '/src/pages/**/*.html')
+  const builtFiles = glob.sync(__dirname + '/src/ui/pages/**/*.html')
   fs.outputFileSync(
     './build/client.json', 
     JSON.stringify(
@@ -99,7 +125,7 @@ function webpackTask (cb) {
 let server = undefined
 function serve (cb) {
   if (!server) {
-    server = gls.new(['--harmony', 'build/main.js'])
+    server = gls.new(['--harmony', 'build/server/server.js'])
     server.start()
   } else {
     server.stop()
@@ -108,11 +134,11 @@ function serve (cb) {
   cb()
 }
 
-const buildTasks = series(scriptSvelte, styleSvelte, buildClientJs, webpackTask)
+const buildTasks = series(scriptSvelte, scriptServer, styleSvelte, buildClientJs, webpackTask)
 
 const developmentTasks = series(
   emptyDirs, 
-  series(scriptSvelte, styleSvelte, buildClientJs, webpackTask, serve)
+  series(scriptSvelte, scriptServer, styleSvelte, buildClientJs, webpackTask, serve)
 )
 
 process.env.NODE_ENV !== 'production' && watch(['src/**/*.*', 'views'], developmentTasks)

@@ -1,6 +1,7 @@
 # Svelte + Typescript + Storybook SSR Boilerplate
 
 This is a __Svelte + Typescript + Storybook SSR__ boiletplate project.
+If you are intrested in developing only UI components or SPA, it is [here](https://github.com/farhan2106/svelte-typescript).
 
 ## Creating Pages / Routes
 
@@ -8,7 +9,7 @@ This is a __Svelte + Typescript + Storybook SSR__ boiletplate project.
 
 2. Subroutes is created by subfolder. It also assumes `/Index` as `/`. For example, `pages/member/Index.html` will create a route `http://localhost/member/`
 
-3. Every page has its own client side javascript to be used during hydration. This will ensure that it will load the minimum required svelte component.
+3. Every page has its own client side javascript to be used during hydration. This client side JS will load the minimum required svelte component.
 
 ## How does the build process works?
 

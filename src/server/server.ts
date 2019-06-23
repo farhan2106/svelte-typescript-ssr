@@ -9,7 +9,7 @@ import express from 'express'
 const reload = require('reload')
 const bodyParser = require('body-parser')
 const glob = require('glob')
-const clientJson = require('./../build/client.json')
+const clientJson = require('./../../build/client.json')
 
 const app = express()
 
@@ -26,7 +26,7 @@ async function run () {
 
     // get pages path
     const routePaths: string[] = await new Promise(function (resolve, reject) {
-      glob(__dirname + '/pages/**/*.html', {}, (err: Error, files: string[]) => {
+      glob(__dirname + './../ui/pages/**/*.html', {}, (err: Error, files: string[]) => {
         // 1. generate list of route path
         return resolve(
           files.map(f => 
@@ -40,7 +40,7 @@ async function run () {
 
     // Render templates 
     const renderedTmpl = routePaths.map((p: string) => {
-      const tmpl = require(`./pages/${p}.html`)
+      const tmpl = require(`./../ui/pages/${p}.html`)
       return tmpl.default.render()
     })
 
@@ -50,7 +50,7 @@ async function run () {
       // find the javascript file for the client based on route
       let clientJsFileName: string
       for (const index in clientJson) {
-        if (clientJson[index] ===`${__dirname}/pages${p}.html`) {
+        if (clientJson[index].indexOf(`/ui/pages${p}.html`) > -1) {
           clientJsFileName = index
         }
       }
