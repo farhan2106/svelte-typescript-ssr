@@ -4,11 +4,10 @@
     "module": "es2015",
     "lib": ["dom", "es2015"],
     "strict": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
     "types": ["node"],
-    "rootDir": "./src",
-    "outDir": "./build"
+    "rootDir": "./src/ui",
+    "outDir": "./build/ui"
   }
 }
 

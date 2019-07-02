@@ -14,27 +14,9 @@ const webpack = require('webpack')
 const importFresh = require('import-fresh')
 const chalk = require('chalk')
 
-const svelteTsProject = ts.createProject({
-  "target": "es3",
-  "module": "es2015",
-  "lib": ["dom", "es2015"],
-  "strict": true,
-  "types": ["node"],
-  "rootDir": "./src/ui",
-  "outDir": "./build/ui"
-})
+const svelteTsProject = ts.createProject('tsconfig.ui.json')
 
-const serverTsProject = ts.createProject({
-  "target": "es3",
-  "module": "commonjs",
-  "lib": ["es2015"],
-  "strict": true,
-  "esModuleInterop": true,
-  "allowSyntheticDefaultImports": true,
-  "types": ["node"],
-  "rootDir": "./src/server",
-  "outDir": "./build/server"
-})
+const serverTsProject = ts.createProject('tsconfig.server.json')
 
 function emptyDirs () {
   return src(['build', 'public'], { read: false, allowEmpty: true })
