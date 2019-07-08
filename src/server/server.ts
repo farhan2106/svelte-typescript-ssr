@@ -4,11 +4,10 @@ require('svelte/register')({
   hydratable: true,
   dev: process.env.NODE_ENV !== 'production'
 })
-
 import express from 'express'
-const reload = require('reload')
-const bodyParser = require('body-parser')
-const glob = require('glob')
+import reload from 'reload';
+import bodyParser from 'body-parser';
+import glob from 'glob';
 const clientJson = require('./../../build/client.json')
 
 const app = express()
@@ -26,7 +25,7 @@ async function run () {
 
     // get pages path
     const routePaths: string[] = await new Promise(function (resolve, reject) {
-      glob(__dirname + './../ui/pages/**/*.html', {}, (err: Error, files: string[]) => {
+      glob(__dirname + './../ui/pages/**/*.html', {}, (err, files) => {
         // 1. generate list of route path
         return resolve(
           files.map(f => 

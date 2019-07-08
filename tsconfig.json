@@ -5,9 +5,12 @@
     "lib": ["dom", "es2015"],
     "strict": true,
     "sourceMap": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "types": ["node"],
-    "rootDir": "./src/ui",
-    "outDir": "./build/ui"
+    "rootDir": "./src",
+    "moduleResolution": "node",
+    "resolveJsonModule": true 
   }
 }
 

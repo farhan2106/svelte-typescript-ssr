@@ -14,9 +14,7 @@ const webpack = require('webpack')
 const importFresh = require('import-fresh')
 const chalk = require('chalk')
 
-const svelteTsProject = ts.createProject('tsconfig.ui.json')
-
-const serverTsProject = ts.createProject('tsconfig.server.json')
+const tsProject = ts.createProject('tsconfig.json')
 
 function emptyDirs () {
   return src(['build', 'public'], { read: false, allowEmpty: true })
@@ -25,13 +23,13 @@ function emptyDirs () {
 
 function scriptServer () {
   return src('src/server/**/*.ts')
-    .pipe(serverTsProject())
+    .pipe(tsProject())
     .pipe(dest('build/server'))
 }
 
 function scriptSvelte () {
   return src('src/ui/**/*.ts')
-    .pipe(svelteTsProject())
+    .pipe(tsProject())
     .pipe(tap(function(file) {
       const svelteHtmlPath = file.path.replace('build', 'src').replace('.js', '.html')
       if (fs.existsSync(svelteHtmlPath)) {
@@ -107,7 +105,7 @@ function webpackTask (cb) {
 let server = undefined
 function serve (cb) {
   if (!server) {
-    server = gls.new(['--harmony', 'build/server/server.js'])
+    server = gls.new(['build/server/main.js'])
     server.start()
   } else {
     server.stop()
