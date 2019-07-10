@@ -10,34 +10,46 @@
       <div class="column">
         <h1 class="title">Sign Up</h1>
         <p class="subtitle is-4">Something <strong>should</strong> be here</p>
-        <form on:submit|preventDefault={signUpHandler} autocomplete="off">
+
+        {#if (errors && typeof errors[0] === 'string')}
+        <div class="notification is-danger">
+          Primar lorem ipsum dolor sit amet, consectetur
+          adipiscing elit lorem ipsum dolor. <strong>Pellentesque risus mi</strong>, tempus quis placerat ut, porta nec nulla. Vestibulum rhoncus ac ex sit amet fringilla. Nullam gravida purus diam, et dictum <a>felis venenatis</a> efficitur. Sit amet,
+          consectetur adipiscing elit
+        </div>
+        {/if}
+
+        <form autocomplete="off">
           <div class="field">
             <label class="label">Username</label>
             <div class="control">
-              <input class="input" name="username" type="text" placeholder="e.g Alex Smith" on:keyup={fillForm} />
+              <input class="input" name="username" type="text" placeholder="e.g Alex Smith" on:keyup={fillForm} on:change={fillForm} on:focusout={fillForm} />
             </div>
+            <p class="help is-danger">{errorsInput.username}</p>
           </div>
 
           <div class="field">
             <label class="label">Email</label>
             <div class="control">
-              <input class="input" name="email" type="email" placeholder="e.g asmith@gmail.com" on:keyup={fillForm} />
+              <input class="input" name="email" type="email" placeholder="e.g asmith@gmail.com" on:keyup={fillForm} on:change={fillForm} on:focusout={fillForm} />
             </div>
+            <p class="help is-danger">{errorsInput.email}</p>
           </div>
           
           <div class="field">
             <label class="label">Password</label>
             <div class="control">
-              <input class="input" name="password" type="password" placeholder="min. 8 characters" on:keyup={fillForm} />
+              <input class="input" name="password" type="password" placeholder="min. 8 characters" on:keyup={fillForm} on:change={fillForm} on:focusout={fillForm} />
             </div>
+            <p class="help is-danger">{errorsInput.password}</p>
           </div>
 
           <div class="field is-grouped">
             <div class="control">
-              <button class="button is-link">Submit</button>
+              <button class="button is-link" type="button" on:click={signUpHandler} disabled={!canSubmitForm}>Submit</button>
             </div>
             <div class="control">
-              <button class="button is-text">Cancel</button>
+              <button class="button is-text" type="button">Cancel</button>
             </div>
           </div>
         </form>
