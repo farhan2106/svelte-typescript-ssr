@@ -12,11 +12,9 @@
         <p class="subtitle is-4">Something <strong>should</strong> be here</p>
 
         {#if (errors && typeof errors[0] === 'string')}
-        <div class="notification is-danger">
-          Primar lorem ipsum dolor sit amet, consectetur
-          adipiscing elit lorem ipsum dolor. <strong>Pellentesque risus mi</strong>, tempus quis placerat ut, porta nec nulla. Vestibulum rhoncus ac ex sit amet fringilla. Nullam gravida purus diam, et dictum <a>felis venenatis</a> efficitur. Sit amet,
-          consectetur adipiscing elit
-        </div>
+          <div class="notification is-danger">
+            {errors[0]}
+          </div>
         {/if}
 
         <form autocomplete="off">
@@ -49,7 +47,7 @@
               <button class="button is-link" type="button" on:click={signUpHandler} disabled={!canSubmitForm}>Submit</button>
             </div>
             <div class="control">
-              <button class="button is-text" type="button">Cancel</button>
+              <a class="button is-text" type="button" href="/">Cancel</a>
             </div>
           </div>
         </form>
