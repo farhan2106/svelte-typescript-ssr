@@ -1,10 +1,13 @@
 const path = require('path')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const importFresh = require('import-fresh')
+
+const mode = process.env.NODE_ENV || 'development'
+const prod = mode === 'production'
 
 /**
  * Webpack is used to generate the client js files for hydration
- * Each route will have its own js to ensure that it only loads 
+ * Each route will have its own js to ensure that it only loads
  * the minimum svelte component.
  */
 module.exports = {
@@ -20,9 +23,9 @@ module.exports = {
       {
         test: /\.(sass|scss)$/,
         use: [
-          "style-loader",
-          "css-loader",
-          "sass-loader"
+          prod ? MiniCssExtractPlugin.loader : 'style-loader',
+          'css-loader',
+          'sass-loader'
         ]
       },
       {
@@ -34,18 +37,17 @@ module.exports = {
             emitCss: false,
             css: false,
             hydratable: true
-          },
-        },
+          }
+        }
       }
     ]
   },
+  mode,
+  devtool: prod ? false : 'source-map',
   plugins: [
     new MiniCssExtractPlugin({
-      // Options similar to the same options in webpackOptions.output
-      // both options are optional
       filename: '[name].css',
-      chunkFilename: '[id].css',
-    }),
+      chunkFilename: '[id].css'
+    })
   ]
-};
-
+}

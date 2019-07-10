@@ -1,3 +1,4 @@
+const path = require('path')
 const { dest, src, watch, series } = require('gulp')
 const ts = require('gulp-typescript')
 const tap = require('gulp-tap')
@@ -7,77 +8,63 @@ const fs = require('fs-extra')
 const glob = require('glob')
 const shortid = require('shortid')
 const arrToObj = require('array-to-object')
-const sass = require('gulp-sass')
-const postcss = require("gulp-postcss")
-const atImport = require("postcss-import")
 const webpack = require('webpack')
 const importFresh = require('import-fresh')
 const chalk = require('chalk')
+const cache = require('gulp-cached');
 
 const tsProject = ts.createProject('tsconfig.json')
 
 function emptyDirs () {
   return src(['build', 'public'], { read: false, allowEmpty: true })
-          .pipe(clean())
+    .pipe(clean())
 }
 
 function scriptServer () {
   return src('src/server/**/*.ts')
+    .pipe(cache('scriptServer'))
     .pipe(tsProject())
     .pipe(dest('build/server'))
 }
 
-function scriptSvelte () {
+
+function scriptUi () {
   return src('src/ui/**/*.ts')
+    // .pipe(cache('scriptUi')) // buggy when enabled
     .pipe(tsProject())
-    .pipe(tap(function(file) {
+    .pipe(tap(function (file) {
       const svelteHtmlPath = file.path.replace('build', 'src').replace('.js', '.html')
+      const svelteStylePath = file.path.replace('build', 'src').replace('.js', '.scss')
       if (fs.existsSync(svelteHtmlPath)) {
+
+        let styleData =  Buffer.from([])
+        if (fs.existsSync(svelteStylePath)) {
+          styleData = fs.readFileSync(svelteStylePath)
+        }
+
         const bufferArr = [
           fs.readFileSync(svelteHtmlPath),
           Buffer.from(`\r\n\r\n<script>\r\n`),
           file.contents,
           Buffer.from(`</script>\r\n`),
+          Buffer.from(`\r\n\r\n<style>\r\n`),
+          styleData,
+          Buffer.from(`</style>\r\n`),
         ]
-        file.contents = Buffer.concat(bufferArr);
+        file.contents = Buffer.concat(bufferArr)
         file.path = file.path.replace('.js', '.html')
       }
     }))
     .pipe(dest('build/ui'))
 }
 
-function styleSvelte () {
-  return src('src/**/*.scss')
-    .pipe(sass())
-    .pipe(postcss([
-      atImport({
-        path: [
-          __dirname + '/src',
-        ]
-      })
-    ]))
-    .pipe(tap(function(file) {
-      const svelteHtmlPath = file.path.replace('.css', '.html')
-      if (fs.existsSync(svelteHtmlPath)) {
-        const bufferArr = [
-          Buffer.from(`\r\n\r\n<style>\r\n`),
-          file.contents,
-          Buffer.from(`</style>\r\n`),
-        ]
-        file.contents = Buffer.concat(bufferArr);
-        file.path = svelteHtmlPath
-      }
-    }))
-    .pipe(dest('build', { overwrite: true, append: true }))
-}
-
 function buildClientJs (cb) {
-  const builtFiles = glob.sync(__dirname + '/src/ui/pages/**/*.html')
+  const builtFiles = glob.sync(path.join(__dirname, '/src/ui/pages/**/*.html'))
   fs.outputFileSync(
-    './build/client.json', 
+    './build/client.json',
     JSON.stringify(
       arrToObj(
-        builtFiles.map(() => shortid.generate()), 
+        builtFiles.map(() => shortid.generate()),
         builtFiles.map(f => f.replace('/src/', '/build/'))
       )
     )
@@ -86,7 +73,8 @@ function buildClientJs (cb) {
 }
 
 function webpackTask (cb) {
-  webpack(importFresh('./webpack.config')).run((err, stats) => {
+  const configFile = process.env.NODE_ENV !== 'production' ? './webpack.config' : './webpack.prod.config'
+  webpack(importFresh(configFile)).run((err, stats) => {
     if (err !== null) {
       console.error(chalk.red(err))
     }
@@ -99,10 +87,10 @@ function webpackTask (cb) {
       console.warn(chalk.yellow(stats.compilation.warnings))
     }
     cb()
-  });
+  })
 }
 
-let server = undefined
+let server
 function serve (cb) {
   if (!server) {
     server = gls.new(['build/server/main.js'])
@@ -114,12 +102,9 @@ function serve (cb) {
   cb()
 }
 
-const buildTasks = series(scriptSvelte, scriptServer, styleSvelte, buildClientJs, webpackTask)
+const buildTasks = series(scriptUi, scriptServer, buildClientJs, webpackTask)
 
-const developmentTasks = series(
-  emptyDirs, 
-  series(scriptSvelte, scriptServer, styleSvelte, buildClientJs, webpackTask, serve)
-)
+const developmentTasks = series(scriptUi, scriptServer, buildClientJs, webpackTask, serve)
 
 process.env.NODE_ENV !== 'production' && watch(['src/**/*.*', 'views'], developmentTasks)
-exports.default = process.env.NODE_ENV !== 'production' ? developmentTasks : buildTasks
+exports.default = process.env.NODE_ENV !== 'production' ? series(emptyDirs, developmentTasks) : buildTasks

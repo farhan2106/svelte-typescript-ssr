@@ -6,6 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 
+  {{#unless devMode}}
+    <link rel="stylesheet" type="text/css" href="/bulma.css">
+  {{/unless}}
   <style type="text/css">
     {{{ css.code }}}
   </style>
@@ -13,10 +16,15 @@
 <body>
   <div id="app">{{{ html }}}</div>
 
-  <script src="/bulma.js"></script>
+  {{#unless devMode}}
+    <script src="/ie11.js"></script> 
+  {{/unless}}
+  {{#if devMode}}
+    <script src="/bulma.js"></script> 
+  {{/if}}
   <script src="{{ sveltePageJs }}"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', function () {
       new window.page.default({
         target: document.getElementById('app'),
         hydrate: true
