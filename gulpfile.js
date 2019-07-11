@@ -106,5 +106,9 @@ const buildTasks = series(scriptUi, scriptServer, buildClientJs, webpackTask)
 
 const developmentTasks = series(scriptUi, scriptServer, buildClientJs, webpackTask, serve)
 
-process.env.NODE_ENV !== 'production' && watch(['src/**/*.*', 'views'], developmentTasks)
+if (process.env.NODE_ENV !== 'production') {
+  watch(['views'], series(scriptServer, webpackTask, serve))
+  watch(['src/server/**/*.ts'], series(scriptServer, webpackTask, serve))
+  watch(['src/ui/**/*.*'], series(scriptUi, buildClientJs, webpackTask, serve))
+}
 exports.default = process.env.NODE_ENV !== 'production' ? series(emptyDirs, developmentTasks) : buildTasks
