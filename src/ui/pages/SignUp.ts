@@ -1,12 +1,11 @@
-const Ajv = require('ajv');
-import { find } from 'lodash';
+const djv = require('djv');
 import axios from 'axios';
 import { Machine, interpret, send, assign } from 'xstate';
 import NavBar from './../components/NavBar/NavBar.html';NavBar;
 import signUpSchema from './../schemas/SignUp';
 
-const ajv = new Ajv({ allErrors: true });
-const validate = ajv.compile(signUpSchema);
+const djvEnv = new djv();
+djvEnv.addSchema('default', signUpSchema);
 
 enum STATES {
   DEFAULT = 'default',
@@ -22,7 +21,17 @@ enum EVENTS {
   SUBMIT_FORM = 'SUBMIT_FORM'
 }
 
-const appMachine = Machine({
+interface AppContext {
+  data: {
+    [key:string]: any,
+    username: string,
+    email: string,
+    password: string
+  },
+  errors: any[]
+}
+
+const appMachine = Machine<AppContext>({
   id: 'signUpPage',
   initial: STATES.DEFAULT,
   strict: true,
@@ -37,7 +46,10 @@ const appMachine = Machine({
   states: {
     [STATES.DEFAULT]: {
       on: {
-        [EVENTS.FILL_FORM]: STATES.FILLING
+        [EVENTS.FILL_FORM]: {
+          target: STATES.FILLING,
+          actions: ['fillForm', send(EVENTS.VALIDATE_FORM)]
+        },
       }
     },
     [STATES.FILLING]: {
@@ -82,24 +94,19 @@ const appMachine = Machine({
 }, {
   actions: {
     fillForm: (context, event) => {
-      if (event && event.payload && event.payload.username) {
-        context.data.username = event.payload.username;
-      }
-      if (event && event.payload && event.payload.email) {
-        context.data.email = event.payload.email;
-      }
-      if (event && event.payload && event.payload.password) {
-        context.data.password = event.payload.password;
-      }
+      const key = event.payload.key
+      context.data[key] = event.payload.value
     }
   },
   guards: {
     formValid: (context, event) => {
-      const validateStatus = validate(context.data);
-      let errors = validate.errors
-      if (errors === null) errors = []
-      context.errors = errors
-      return validateStatus as boolean;
+      const validateError = djvEnv.validate('default#/common', context.data);
+      if (validateError) {
+        context.errors = [validateError]
+      } else {
+        context.errors = []
+      }
+      return !validateError;
     }
   }
 })
@@ -130,7 +137,7 @@ const submitForm = (data: any) => {
 }
 
 const getError = (arr: any, key: any) => {
-  return (find(arr, e => e.dataPath === `.${key}`) || {}).message || ''
+  return (arr.find((e: any) => e.dataPath === `'${key}'`) || {}).schemaPath || ''
 }
 
 $: {
@@ -147,7 +154,8 @@ function signUpHandler (this: HTMLFormElement, e: KeyboardEvent) {
 function fillForm (this: HTMLInputElement, e: KeyboardEvent) {
   intepreter.send(EVENTS.FILL_FORM, {
     payload: {
-      [this.name]: this.value || ''
+      key: this.name,
+      value: this.value || ''
     }
   })
 }
