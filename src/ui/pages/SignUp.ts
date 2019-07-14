@@ -1,11 +1,11 @@
-const djv = require('djv');
+const { Validator } = require('@cesium133/forgjs');
 import axios from 'axios';
 import { Machine, interpret, send, assign } from 'xstate';
 import NavBar from './../components/NavBar/NavBar.html';NavBar;
 import signUpSchema from './../schemas/SignUp';
+import { stat } from 'fs';
 
-const djvEnv = new djv();
-djvEnv.addSchema('default', signUpSchema);
+const vComplex = new Validator(signUpSchema);
 
 enum STATES {
   DEFAULT = 'default',
@@ -28,7 +28,8 @@ interface AppContext {
     email: string,
     password: string
   },
-  errors: any[]
+  errors: any[],
+  networkError: string
 }
 
 const appMachine = Machine<AppContext>({
@@ -41,7 +42,8 @@ const appMachine = Machine<AppContext>({
       email: '',
       password: ''
     },
-    errors: []
+    errors: [],
+    networkError: ''
   },
   states: {
     [STATES.DEFAULT]: {
@@ -83,7 +85,7 @@ const appMachine = Machine<AppContext>({
         },
         onError: {
           target: STATES.VALID,
-          actions: assign({ errors: (context: any, event: any) => [event.data.message] })
+          actions: assign({ networkError: (context: any, event: any) => event.data.message })
         }
       } as any
     },
@@ -100,13 +102,13 @@ const appMachine = Machine<AppContext>({
   },
   guards: {
     formValid: (context, event) => {
-      const validateError = djvEnv.validate('default#/common', context.data);
-      if (validateError) {
-        context.errors = [validateError]
+      const validationErrors = vComplex.getErrors(context.data)
+      if (validationErrors.length > 0) {
+        context.errors = validationErrors
       } else {
         context.errors = []
       }
-      return !validateError;
+      return (context.errors.length === 0);
     }
   }
 })
@@ -116,6 +118,7 @@ const intepreter = interpret(appMachine)
 intepreter.start();
 
 // html vars
+let networkError = ''
 let errors: any[] = []
 let canSubmitForm = false
 
@@ -123,6 +126,7 @@ let canSubmitForm = false
 let errorsInput: any = {}
 
 intepreter.subscribe(state => {
+  networkError = state.context.networkError
   errors = state.context.errors
   if (state.value === STATES.VALID) {
     canSubmitForm = true
@@ -137,13 +141,18 @@ const submitForm = (data: any) => {
 }
 
 const getError = (arr: any, key: any) => {
-  return (arr.find((e: any) => e.dataPath === `'${key}'`) || {}).schemaPath || ''
+  const errStr = arr.find((e: any) => {
+    if (e.includes(`${key}:`)) return e
+  })
+  if (errStr) {
+    return errStr.replace(`${key}:`, '')
+  }
 }
 
 $: {
-  errorsInput.username = getError(errors, 'username')
-  errorsInput.email = getError(errors, 'email')
-  errorsInput.password = getError(errors, 'password')
+  errorsInput.username = getError(errors, 'username') || ''
+  errorsInput.email = getError(errors, 'email') || ''
+  errorsInput.password = getError(errors, 'password') || ''
 }
 
 // html functions

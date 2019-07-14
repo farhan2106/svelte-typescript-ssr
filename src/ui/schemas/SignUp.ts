@@ -1,22 +1,15 @@
+import { Rule } from '@cesium133/forgjs';
+
 export default {
-  "common": {
-    "title": "SignUpSchema",
-    "description": "Schema for sign up form",
-    "type": "object",
-    "properties": {
-      "username": {
-        "type": "string",
-        "minLength": 6
-      },
-      "email": {
-        "type": "string",
-        "format": "email"
-      },
-      "password": {
-        "type": "string",
-        "minLength": 8
-      }
-    },
-    "required": [ "username", "email", "password" ]
-  }
+  username: new Rule({
+    type: 'string',
+    minLength: 6
+  }, 'username: Should be at least 6 characters long.'),
+  email: new Rule({
+    type: 'email',
+  }, 'email: Should be valid email.'),
+  password: new Rule({
+    type: 'password',
+    minLength: 8
+  }, 'password: Should be at least 6 characters long.')
 }

@@ -11,9 +11,9 @@
         <h1 class="title">Sign Up</h1>
         <p class="subtitle is-4">Something <strong>should</strong> be here</p>
 
-        {#if (errors && typeof errors[0] === 'string')}
+        {#if (networkError)}
           <div class="notification is-danger">
-            {errors[0]}
+            {networkError}
           </div>
         {/if}
 
