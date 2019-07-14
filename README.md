@@ -21,3 +21,5 @@ If you are intrested in developing only UI components or SPA, it is [here](https
 ## TODO
 
 - Add service-worker
+- Add Purify CSS
+- Add Brotli compression

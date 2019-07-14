@@ -4,8 +4,9 @@ require('svelte/register')({
   hydratable: true,
   dev: process.env.NODE_ENV !== 'production'
 })
-import express from 'express'
 import reload from 'reload';
+import express from 'express';
+import compression from 'compression';
 import bodyParser from 'body-parser';
 import glob from 'glob';
 const clientJson = require('./../../build/client.json')
@@ -19,6 +20,7 @@ async function run () {
     app.set('env', process.env.NODE_ENV || 'development')
     app.set('view engine', 'hbs')
 
+    app.use(compression());
     app.use(bodyParser.json()); // for parsing application/json
     app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
     app.use(express.static('public'))
