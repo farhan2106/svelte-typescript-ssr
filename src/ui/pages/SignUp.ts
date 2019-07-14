@@ -1,9 +1,8 @@
-const { Validator } = require('@cesium133/forgjs');
 import axios from 'axios';
 import { Machine, interpret, send, assign } from 'xstate';
+import { Validator } from '@cesium133/forgjs';
 import NavBar from './../components/NavBar/NavBar.html';NavBar;
 import signUpSchema from './../schemas/SignUp';
-import { stat } from 'fs';
 
 const vComplex = new Validator(signUpSchema);
 
@@ -113,8 +112,10 @@ const appMachine = Machine<AppContext>({
   }
 })
 
-const intepreter = interpret(appMachine)
-  .onTransition((state) => console.log(state.event.type, state.value, state.context))
+let intepreter = interpret(appMachine)
+if (process.env.NODE_ENV === 'development') {
+  intepreter = intepreter.onTransition((state) => console.log(state.event.type, state.value, state.context))
+}
 intepreter.start();
 
 // html vars

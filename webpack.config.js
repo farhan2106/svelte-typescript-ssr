@@ -1,3 +1,4 @@
+const webpack = require('webpack')
 const path = require('path')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const importFresh = require('import-fresh')
@@ -45,6 +46,9 @@ module.exports = {
   mode,
   devtool: prod ? false : 'source-map',
   plugins: [
+    new webpack.EnvironmentPlugin({
+      NODE_ENV: 'development'
+    }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css'

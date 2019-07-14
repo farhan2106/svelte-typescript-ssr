@@ -1,3 +1,4 @@
+const webpack = require('webpack')
 const merge = require('webpack-merge')
 const BrotliPlugin = require('brotli-webpack-plugin')
 const CompressionPlugin = require('compression-webpack-plugin');
@@ -9,10 +10,9 @@ module.exports = merge(require('./webpack.config'), {
   module: {
     rules: [
       {
-        test: /(\.m?js?$)/,
+        // test: /(\.m?js?$)/,
+        test: /(\.m?js?$)|(\.svelte$)/,
         exclude: /(\bcore-js\b|node_modules)/,
-        // test: /(\.m?js?$)|(\.svelte$)/,
-        // exclude: /\bcore-js\b/,
         use: {
           loader: 'babel-loader',
           options: {
@@ -29,6 +29,9 @@ module.exports = merge(require('./webpack.config'), {
     ]
   },
   plugins: [
+    new webpack.EnvironmentPlugin({
+      NODE_ENV: 'production'
+    }),
     new BrotliPlugin({
       asset: '[path].br[query]',
       test: /\.(js|css|html|svg)$/,
