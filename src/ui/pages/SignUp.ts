@@ -1,115 +1,11 @@
 import axios from 'axios';
-import { Machine, interpret, send, assign } from 'xstate';
-import { Validator } from '@cesium133/forgjs';
+import { interpret } from 'xstate';
 import NavBar from './../components/NavBar/NavBar.html';NavBar;
 import signUpSchema from './../schemas/SignUp';
+import FormStateMachine, { STATES, EVENTS } from '../lib/FormStateMachine';
 
-const vComplex = new Validator(signUpSchema);
-
-enum STATES {
-  DEFAULT = 'default',
-  FILLING = 'filling',
-  VALID = 'valid',
-  SUBMITTING = 'submitting',
-  SUBMITTED = 'submitted'
-}
-
-enum EVENTS {
-  FILL_FORM = 'FILL_FORM',
-  VALIDATE_FORM = 'VALIDATE_FORM',
-  SUBMIT_FORM = 'SUBMIT_FORM'
-}
-
-interface AppContext {
-  data: {
-    [key:string]: any,
-    username: string,
-    email: string,
-    password: string
-  },
-  errors: any[],
-  networkError: string
-}
-
-const appMachine = Machine<AppContext>({
-  id: 'signUpPage',
-  initial: STATES.DEFAULT,
-  strict: true,
-  context: {
-    data: {
-      username: '',
-      email: '',
-      password: ''
-    },
-    errors: [],
-    networkError: ''
-  },
-  states: {
-    [STATES.DEFAULT]: {
-      on: {
-        [EVENTS.FILL_FORM]: {
-          target: STATES.FILLING,
-          actions: ['fillForm', send(EVENTS.VALIDATE_FORM)]
-        },
-      }
-    },
-    [STATES.FILLING]: {
-      on: {
-        [EVENTS.FILL_FORM]: {
-          actions: ['fillForm', send(EVENTS.VALIDATE_FORM)]
-        },
-        [EVENTS.VALIDATE_FORM]: {
-          target: STATES.VALID,
-          cond: 'formValid'
-        }
-      }
-    },
-    [STATES.VALID]: {
-      on: {
-        [EVENTS.SUBMIT_FORM]: {
-          target: STATES.SUBMITTING
-        },
-        [EVENTS.FILL_FORM]: {
-          target: STATES.FILLING,
-          actions: ['fillForm', send(EVENTS.VALIDATE_FORM)]
-        }
-      }
-    },
-    [STATES.SUBMITTING]: {
-      invoke: {
-        id: 'submitForm',
-        src: (context: any, event: any) => submitForm(context),
-        onDone: {
-          target: STATES.SUBMITTED
-        },
-        onError: {
-          target: STATES.VALID,
-          actions: assign({ networkError: (context: any, event: any) => event.data.message })
-        }
-      } as any
-    },
-    [STATES.SUBMITTED]: {
-      type: 'final'
-    }
-  }
-}, {
-  actions: {
-    fillForm: (context, event) => {
-      const key = event.payload.key
-      context.data[key] = event.payload.value
-    }
-  },
-  guards: {
-    formValid: (context, event) => {
-      const validationErrors = vComplex.getErrors(context.data)
-      if (validationErrors.length > 0) {
-        context.errors = validationErrors
-      } else {
-        context.errors = []
-      }
-      return (context.errors.length === 0);
-    }
-  }
+const appMachine = FormStateMachine(signUpSchema, (data: any) => {
+  return axios.post('/api/signup', data)
 })
 
 let intepreter = interpret(appMachine)
@@ -136,11 +32,6 @@ intepreter.subscribe(state => {
   }
 })
 
-// non-html functions
-const submitForm = (data: any) => {
-  return axios.post('/api/signup', data)
-}
-
 const getError = (arr: any, key: any) => {
   const errStr = arr.find((e: any) => {
     if (e.includes(`${key}:`)) return e
@@ -157,7 +48,7 @@ $: {
 }
 
 // html functions
-function signUpHandler (this: HTMLFormElement, e: KeyboardEvent) {
+function submitFormHandler (this: HTMLFormElement, e: KeyboardEvent) {
   intepreter.send(EVENTS.SUBMIT_FORM)
 }
 
