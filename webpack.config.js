@@ -2,6 +2,8 @@ const webpack = require('webpack')
 const path = require('path')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const importFresh = require('import-fresh')
+const sass = require('node-sass')
+const postcss = require('postcss')
 
 const mode = process.env.NODE_ENV || 'development'
 const prod = mode === 'production'
@@ -12,7 +14,7 @@ const prod = mode === 'production'
  * the minimum svelte component.
  */
 module.exports = {
-  entry: Object.assign({ 'bulma': 'bulma' }, importFresh('./build/client.json')),
+  entry: Object.assign({ 'bulma': './build/ui/assets/main.scss' }, importFresh('./build/client.json')),
   mode: process.env.NODE_ENV || 'development',
   output: {
     libraryTarget: 'umd',
@@ -35,6 +37,21 @@ module.exports = {
         use: {
           loader: 'svelte-loader',
           options: {
+            preprocess: {
+              style: async (input) => {
+                const postCssOpts = {
+                  from: input.filename.replace(__dirname, '').replace('.html', '.css'),
+                  to: input.filename.replace(__dirname, '').replace('/build/', '/src/')
+                }
+                let result = sass.renderSync({
+                  data: input.content
+                })
+                result = await postcss(require('./postcss.config')).process(result.css.toString(), postCssOpts)
+                return {
+                  code: result.css.toString()
+                }
+              }
+            },
             emitCss: false,
             css: false,
             hydratable: true

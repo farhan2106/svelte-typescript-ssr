@@ -15,6 +15,12 @@ const cache = require('gulp-cached');
 
 const tsProject = ts.createProject('tsconfig.json')
 
+function copyTask () {
+  return src([
+    'src/ui/assets/**/**'
+  ]).pipe(dest('build/ui/assets'))
+}
+
 function emptyDirs () {
   return src(['build', 'public'], { read: false, allowEmpty: true })
     .pipe(clean())
@@ -26,7 +32,6 @@ function scriptServer () {
     .pipe(tsProject())
     .pipe(dest('build/server'))
 }
-
 
 function scriptUi () {
   return src('src/ui/**/*.ts')
@@ -109,6 +114,7 @@ const developmentTasks = series(scriptUi, scriptServer, buildClientJs, webpackTa
 if (process.env.NODE_ENV !== 'production') {
   watch(['views'], series(scriptServer, webpackTask, serve))
   watch(['src/server/**/*.ts'], series(scriptServer, webpackTask, serve))
-  watch(['src/ui/**/*.*'], series(scriptUi, buildClientJs, webpackTask, serve))
+  watch(['src/ui/**/*.{ts,scss,html}, !src/ui/assets/*.*'], series(scriptUi, buildClientJs, webpackTask, serve))
+  watch(['src/ui/assets/*.*'], copyTask)
 }
-exports.default = process.env.NODE_ENV !== 'production' ? series(emptyDirs, developmentTasks) : buildTasks
+exports.default = process.env.NODE_ENV !== 'production' ? series(emptyDirs, copyTask, developmentTasks) : buildTasks
