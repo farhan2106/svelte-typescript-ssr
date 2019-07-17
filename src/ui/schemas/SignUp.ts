@@ -11,5 +11,5 @@ export default {
   password: new Rule({
     type: 'password',
     minLength: 8
-  }, 'password: Should be at least 6 characters long.')
+  }, 'password: Should be at least 8 characters long.')
 }

@@ -1,5 +1,5 @@
 import { Machine, send, assign, EventObject } from 'xstate';
-import { Validator } from '@cesium133/forgjs';
+import { Validator, Rule } from '@cesium133/forgjs';
 
 export enum STATES {
   DEFAULT = 'default',
@@ -19,7 +19,7 @@ interface FormContext {
   data: {
     [key: string]: any
   },
-  errors: any[],
+  errors: string[],
   networkError: string
 }
 
@@ -27,7 +27,11 @@ interface FormSubmitHandler {
   (context: FormContext): void
 }
 
-export default (formSchema: any, formSubmitHandler: FormSubmitHandler) => {
+interface FormSchema {
+  [key: string]: Rule
+}
+
+export default (formSchema: FormSchema, formSubmitHandler: FormSubmitHandler) => {
 
   const vComplex = new Validator(formSchema);
 
@@ -74,13 +78,13 @@ export default (formSchema: any, formSubmitHandler: FormSubmitHandler) => {
       [STATES.SUBMITTING]: {
         invoke: {
           id: 'submitForm',
-          src: (context: any, event: any) => formSubmitHandler(context),
+          src: (context: FormContext, event: EventObject) => formSubmitHandler(context),
           onDone: {
             target: STATES.SUBMITTED
           },
           onError: {
             target: STATES.VALID,
-            actions: assign({ networkError: (context: any, event: any) => event.data.message })
+            actions: assign({ networkError: (context: FormContext, event: EventObject) => event.data.message })
           }
         } as any
       },

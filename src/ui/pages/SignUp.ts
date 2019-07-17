@@ -16,11 +16,11 @@ intepreter.start();
 
 // html vars
 let networkError = ''
-let errors: any[] = []
+let errors: string[] = []
 let canSubmitForm = false
 
 // reactive
-let errorsInput: any = {}
+let errorsInput: { [key: string]: string } = {}
 
 intepreter.subscribe(state => {
   networkError = state.context.networkError
@@ -32,8 +32,8 @@ intepreter.subscribe(state => {
   }
 })
 
-const getError = (arr: any, key: any) => {
-  const errStr = arr.find((e: any) => {
+const getError = (arr: string[], key: string) => {
+  const errStr = arr.find((e: string) => {
     if (e.includes(`${key}:`)) return e
   })
   if (errStr) {
