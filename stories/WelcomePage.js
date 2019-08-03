@@ -1,7 +1,7 @@
 import { storiesOf } from '@storybook/svelte';
 import { withKnobs, text } from '@storybook/addon-knobs';
 import { action } from '@storybook/addon-actions';
-import WelcomePage from '../build/ui/components/WelcomePage/WelcomePage.html';
+import WelcomePage from '../build/ui/components/WelcomePage/WelcomePage.svelte';
 
 storiesOf('WelcomePage', module)
   .addDecorator(withKnobs)

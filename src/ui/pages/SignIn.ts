@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { interpret } from 'xstate';
-import NavBar from './../components/NavBar/NavBar.html';NavBar;
+import NavBar from './../components/NavBar/NavBar.svelte';NavBar;
 import signInSchema from './../schemas/SignIn';
 import FormStateMachine, { STATES, EVENTS } from '../lib/FormStateMachine';
 

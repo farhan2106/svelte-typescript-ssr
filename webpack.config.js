@@ -8,6 +8,45 @@ const postcss = require('postcss')
 const mode = process.env.NODE_ENV || 'development'
 const prod = mode === 'production'
 
+const svelteLoaders = [{
+  loader: 'svelte-loader',
+  options: {
+    preprocess: {
+      style: async (input) => {
+        const postCssOpts = {
+          from: input.filename.replace(__dirname, '').replace('.svelte', '.css'),
+          to: input.filename.replace(__dirname, '').replace('/build/', '/src/')
+        }
+        let result = sass.renderSync({
+          data: input.content
+        })
+        result = await postcss(require('./postcss.config')).process(result.css.toString(), postCssOpts)
+        return {
+          code: result.css.toString()
+        }
+      }
+    },
+    emitCss: false,
+    css: false,
+    hydratable: true
+  }
+}]
+
+if (prod) {
+  svelteLoaders.unshift({
+    loader: 'babel-loader',
+    options: {
+      presets: [
+        ['@babel/preset-env', {
+          useBuiltIns: 'entry',
+          corejs: 3
+        }]
+      ],
+      sourceType: 'unambiguous'
+    }
+  })
+}
+
 /**
  * Webpack is used to generate the client js files for hydration
  * Each route will have its own js to ensure that it only loads
@@ -34,29 +73,7 @@ module.exports = {
       {
         test: /\.(html|svelte)$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'svelte-loader',
-          options: {
-            preprocess: {
-              style: async (input) => {
-                const postCssOpts = {
-                  from: input.filename.replace(__dirname, '').replace('.html', '.css'),
-                  to: input.filename.replace(__dirname, '').replace('/build/', '/src/')
-                }
-                let result = sass.renderSync({
-                  data: input.content
-                })
-                result = await postcss(require('./postcss.config')).process(result.css.toString(), postCssOpts)
-                return {
-                  code: result.css.toString()
-                }
-              }
-            },
-            emitCss: false,
-            css: false,
-            hydratable: true
-          }
-        }
+        use: svelteLoaders
       }
     ]
   },

@@ -1,5 +1,5 @@
 require('svelte/register')({
-  extensions: ['.html'],
+  extensions: ['.svelte'],
   css: false,
   hydratable: true,
   dev: process.env.NODE_ENV !== 'production'
@@ -27,13 +27,13 @@ async function run () {
 
     // get pages path
     const routePaths: string[] = await new Promise(function (resolve, reject) {
-      glob(__dirname + './../ui/pages/**/*.html', {}, (err, files) => {
+      glob(__dirname + './../ui/pages/**/*.svelte', {}, (err, files) => {
         // 1. generate list of route path
         return resolve(
           files.map(f => 
             '/' + f.substring(
               f.indexOf('pages/')
-            ).replace('pages/', '').replace('.html', '')
+            ).replace('pages/', '').replace('.svelte', '')
           )
         )
       })
@@ -41,7 +41,7 @@ async function run () {
 
     // Render templates 
     const renderedTmpl = routePaths.map((p: string) => {
-      const tmpl = require(`./../ui/pages/${p}.html`)
+      const tmpl = require(`./../ui/pages/${p}.svelte`)
       return tmpl.default.render()
     })
 
@@ -51,7 +51,7 @@ async function run () {
       // find the javascript file for the client based on route
       let clientJsFileName: string
       for (const index in clientJson) {
-        if (clientJson[index].indexOf(`/ui/pages${p}.html`) > -1) {
+        if (clientJson[index].indexOf(`/ui/pages${p}.svelte`) > -1) {
           clientJsFileName = index
         }
       }
@@ -92,4 +92,3 @@ async function run () {
 }
 
 run()
-

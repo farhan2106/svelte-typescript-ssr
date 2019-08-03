@@ -1,4 +1,4 @@
-import ThankYouPage from './../ThankYouPage/ThankYouPage.html'
+import ThankYouPage from './../ThankYouPage/ThankYouPage.svelte'
 
 export const name = ''
 

@@ -10,15 +10,14 @@ module.exports = merge(require('./webpack.config'), {
   module: {
     rules: [
       {
-        // test: /(\.m?js?$)/,
-        test: /(\.m?js?$)|(\.svelte$)/,
-        exclude: /(\bcore-js\b|node_modules)/,
+        test: /(\.m?js?$)/,
+        exclude: /\bcore-js\b/,
         use: {
           loader: 'babel-loader',
           options: {
             presets: [
               ['@babel/preset-env', {
-                useBuiltIns: 'usage',
+                useBuiltIns: 'entry',
                 corejs: 3
               }]
             ],

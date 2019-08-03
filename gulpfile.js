@@ -38,7 +38,7 @@ function scriptUi () {
     // .pipe(cache('scriptUi')) // buggy when enabled
     .pipe(tsProject())
     .pipe(tap(function (file) {
-      const svelteHtmlPath = file.path.replace('build', 'src').replace('.js', '.html')
+      const svelteHtmlPath = file.path.replace('build', 'src').replace('.js', '.svelte')
       const svelteStylePath = file.path.replace('build', 'src').replace('.js', '.scss')
       if (fs.existsSync(svelteHtmlPath)) {
 
@@ -57,14 +57,14 @@ function scriptUi () {
           Buffer.from(`</style>\r\n`),
         ]
         file.contents = Buffer.concat(bufferArr)
-        file.path = file.path.replace('.js', '.html')
+        file.path = file.path.replace('.js', '.svelte')
       }
     }))
     .pipe(dest('build/ui'))
 }
 
 function buildClientJs (cb) {
-  const builtFiles = glob.sync(path.join(__dirname, '/src/ui/pages/**/*.html'))
+  const builtFiles = glob.sync(path.join(__dirname, '/src/ui/pages/**/*.svelte'))
   fs.outputFileSync(
     './build/client.json',
     JSON.stringify(
@@ -114,7 +114,7 @@ const developmentTasks = series(scriptUi, scriptServer, buildClientJs, webpackTa
 if (process.env.NODE_ENV !== 'production') {
   watch(['views'], series(scriptServer, webpackTask, serve))
   watch(['src/server/**/*.ts'], series(scriptServer, webpackTask, serve))
-  watch(['src/ui/**/*.{ts,scss,html}, !src/ui/assets/*.*'], series(scriptUi, buildClientJs, webpackTask, serve))
+  watch(['src/ui/**/*.{ts,scss,svelte}, !src/ui/assets/*.*'], series(scriptUi, buildClientJs, webpackTask, serve))
   watch(['src/ui/assets/*.*'], copyTask)
 }
 exports.default = process.env.NODE_ENV !== 'production' ? series(emptyDirs, copyTask, developmentTasks) : buildTasks

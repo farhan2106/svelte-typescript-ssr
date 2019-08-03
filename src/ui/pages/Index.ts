@@ -1,1 +1,1 @@
-import NavBar from './../components/NavBar/NavBar.html';NavBar;
+import NavBar from './../components/NavBar/NavBar.svelte';NavBar;
