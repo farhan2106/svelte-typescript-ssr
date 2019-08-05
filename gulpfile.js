@@ -114,7 +114,7 @@ const developmentTasks = series(scriptUi, scriptServer, buildClientJs, webpackTa
 if (process.env.NODE_ENV !== 'production') {
   watch(['views'], series(scriptServer, webpackTask, serve))
   watch(['src/server/**/*.ts'], series(scriptServer, webpackTask, serve))
-  watch(['src/ui/**/*.{ts,scss,svelte}, !src/ui/assets/*.*'], series(scriptUi, buildClientJs, webpackTask, serve))
+  watch(['!src/ui/assets/*.*', 'src/ui/**/*.{ts,scss,svelte}'], series(scriptUi, buildClientJs, webpackTask, serve))
   watch(['src/ui/assets/*.*'], copyTask)
 }
 exports.default = process.env.NODE_ENV !== 'production' ? series(emptyDirs, copyTask, developmentTasks) : buildTasks
