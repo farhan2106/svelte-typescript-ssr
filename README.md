@@ -1,3 +1,7 @@
+This repo was developed when Svelte 3 first came out. Since then better svelte-typescript integration has been developed, such as this [one](https://www.npmjs.com/package/svelte-preprocess)
+
+=========
+
 # Svelte + Typescript + Storybook SSR Boilerplate
 
 This is a __Svelte + Typescript + Storybook SSR__ boiletplate project.
